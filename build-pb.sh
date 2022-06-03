@@ -17,25 +17,10 @@ script_path=$(pwd)
 cd -
 } &> /dev/null # disable output
 
-# 定义平台变量
 uname
-case "$(uname)" in
-"Darwin")
-  BUILD_PLATFORM="Mac"
-  ;;
-
-"MINGW"*|"MSYS_NT"*)
-  BUILD_PLATFORM="Windows"
-  ;;
-
-*)
-  echo "Unknown OS"
-  exit 1
-  ;;
-esac
 
 PB_REP_PATH="$script_path/protobuf"
-PB_INSTALL_PATH="$script_path/install"
+PB_INSTALL_PATH="$script_path/install/protobuf"
 PB_BUILD_PATH="$script_path/build"
 
 rm -rf $PB_BUILD_PATH
@@ -48,11 +33,28 @@ popd
 
 pushd "${PB_BUILD_PATH}"
 
-cmake -G "Visual Studio 16 2019" -A Win32 -Dprotobuf_BUILD_TESTS=OFF \
-  -Dprotobuf_UNICODE=ON \
-  -DBUILD_SHARED_LIBS=ON \
-  -DCMAKE_INSTALL_PREFIX=${PB_INSTALL_PATH} \
-  ${PB_REP_PATH}
+case "$(uname)" in
+"Darwin")
+  cmake -G "Xcode" -Dprotobuf_BUILD_TESTS=OFF \
+    -Dprotobuf_UNICODE=ON \
+    -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_INSTALL_PREFIX=${PB_INSTALL_PATH} \
+    ${PB_REP_PATH}
+  ;;
+
+"MINGW"*|"MSYS_NT"*)
+  cmake -G "Visual Studio 16 2019" -A Win32 -Dprotobuf_BUILD_TESTS=OFF \
+    -Dprotobuf_UNICODE=ON \
+    -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_INSTALL_PREFIX=${PB_INSTALL_PATH} \
+    ${PB_REP_PATH}
+  ;;
+
+*)
+  echo "Unknown OS"
+  exit 1
+  ;;
+esac
 
 cmake --build . --config Release --target install
 popd
