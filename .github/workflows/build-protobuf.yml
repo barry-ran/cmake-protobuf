@@ -28,41 +28,30 @@ jobs:
         run: |
           call "C:\Program Files\Git\bin\bash.EXE" --noprofile --norc -e -o pipefail build-pb.sh
         shell: cmd
-
-      - uses: actions/upload-artifact@v1
-        if: runner.os == 'Windows'
-        with:
-          name: protobuf-win-x86.zip
-          path: install
       
-      - name: upload release
-        if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Windows'
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: protobuf-win-x86.zip
-          asset_name: protobuf-win-${{ github.event.release.tag_name }}-x86.zip
-          tag: ${{ github.ref }}
-          overwrite: true
-
       - name: build on mac
         if: runner.os == 'macOS'
         run: |
           ./build-pb.sh
         shell: bash
 
-      - uses: actions/upload-artifact@v1
-        if: runner.os == 'macOS'
+      - name: read install name
+        id: install_name
+        uses: juliangruber/read-file-action@v1
         with:
-          name: protobuf-mac-x64.zip
-          path: install
+          path: ./INSTALL_NAME
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{steps.install_name.outputs.content}}
+          path: ./${{steps.install_name.outputs.content}}
       
       - name: upload release
-        if: startsWith(github.ref, 'refs/tags/') && runner.os == 'macOS'
+        if: startsWith(github.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: protobuf-mac-x64.zip
-          asset_name: protobuf-${{ github.event.release.tag_name }}-mac-x64.zip
+          file: ${{steps.install_name.outputs.content}}
+          asset_name: ${{steps.install_name.outputs.content}}
           tag: ${{ github.ref }}
           overwrite: true

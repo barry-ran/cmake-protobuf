@@ -19,14 +19,33 @@ cd -
 
 uname
 
+# 定义平台变量
+case "$(uname)" in
+"Darwin")
+  OS="mac"
+  ARCH="x64"
+  ;;
+
+"MINGW"*|"MSYS_NT"*)
+  OS="win"
+  ARCH="x86"
+  ;;
+*)
+  echo "Unknown OS"
+  exit 1
+  ;;
+esac
+
+PB_VERSION="v21.1"
 PB_REP_PATH="$script_path/protobuf"
 PB_INSTALL_PATH="$script_path/install/protobuf"
 PB_BUILD_PATH="$script_path/build"
+INSTALL_NAME="protobuf-$PB_VERSION-$OS-$ARCH.zip"
 
 rm -rf $PB_BUILD_PATH
 mkdir $PB_BUILD_PATH
 
-git clone -b v21.1 https://github.com/protocolbuffers/protobuf.git
+git clone -b $PB_VERSION https://github.com/protocolbuffers/protobuf.git
 pushd "protobuf"
 git submodule update --init --recursive
 popd
@@ -58,3 +77,6 @@ esac
 
 cmake --build . --config Release --target install
 popd
+
+7z a ./$INSTALL_NAME ./install/*
+echo "${INSTALL_NAME}" > INSTALL_NAME
