@@ -39,7 +39,7 @@ PB_BUILD_PATH="$script_path/build"
 rm -rf $PB_BUILD_PATH
 mkdir $PB_BUILD_PATH
 
-git clone -b v21.1 git@github.com:protocolbuffers/protobuf.git
+git clone -b v21.1 https://github.com/protocolbuffers/protobuf.git
 pushd "protobuf"
 git submodule update --init --recursive
 popd
