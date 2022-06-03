@@ -32,7 +32,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         if: runner.os == 'Windows'
         with:
-          name: protobuf-win-${{ github.event.release.tag_name }}-x86.zip
+          name: protobuf-win-x86.zip
           path: install
       
       - name: Upload Release
@@ -40,7 +40,7 @@ jobs:
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: protobuf-win-${{ github.event.release.tag_name }}-x86.zip
-          asset_name: protobuf-${{ github.event.release.tag_name }}-x86.zip
+          file: protobuf-win-x86.zip
+          asset_name: protobuf-win-${{ github.event.release.tag_name }}-x86.zip
           tag: ${{ github.ref }}
           overwrite: true

@@ -1,4 +1,6 @@
-# 参考 https://github.com/google/gfbuild-angle/blob/master/build.sh
+# 编译脚本参考 https://github.com/google/gfbuild-angle/blob/master/build.sh
+# win编译参考 https://github.com/protocolbuffers/protobuf/blob/main/cmake/README.md
+# mac编译参考 https://github.com/protocolbuffers/protobuf/blob/main/src/README.md
 
 # 所有执行的命令都打印到终端
 set -x
