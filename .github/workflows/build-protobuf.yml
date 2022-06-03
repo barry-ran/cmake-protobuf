@@ -1,0 +1,46 @@
+name: build protobuf
+ 
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+         # windows-latest会始终保持最新（目前是2022）
+         # windows server 2019安装的是vs2019，windows server 2016安装的是vs2017
+         # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+         - windows-2019
+         - macos-10.15
+
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: build on windows
+        if: runner.os == 'Windows'
+        run: |
+          call "C:\Program Files\Git\bin\bash.EXE" --noprofile --norc -e -o pipefail build-pb.sh
+        shell: cmd
+
+      - uses: actions/upload-artifact@v1
+        if: runner.os == 'Windows'
+        with:
+          name: protobuf-win-${{ github.event.release.tag_name }}-x86.zip
+          path: install
+      
+      - name: Upload Release
+        if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Windows'
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: protobuf-win-${{ github.event.release.tag_name }}-x86.zip
+          asset_name: protobuf-${{ github.event.release.tag_name }}-x86.zip
+          tag: ${{ github.ref }}
+          overwrite: true
