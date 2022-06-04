@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.16)
 include(FetchContent)
 FetchContent_Declare(
   protobuf
-  URL https://github.com/barry-ran/cmake-protobuf/releases/download/v21.1/protobuf-v21.1-win-x86.zip
+  URL https://github.com/barry-ran/cmake-protobuf/releases/download/v21.1/protobuf-v21.1-win-x86-Shared.zip
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
 )
 FetchContent_MakeAvailable(protobuf)
@@ -17,8 +17,11 @@ add_library(protobuf SHARED IMPORTED GLOBAL)
 set_target_properties(protobuf PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${protobuf_SOURCE_DIR}/include
   IMPORTED_LOCATION ${protobuf_SOURCE_DIR}/bin/libprotobuf.dll
+  IMPORTED_LOCATION_DEBUG ${protobuf_SOURCE_DIR}/bin/libprotobufd.dll
   IMPORTED_IMPLIB  ${protobuf_SOURCE_DIR}/lib/libprotobuf.lib
+  IMPORTED_IMPLIB_DEBUG  ${protobuf_SOURCE_DIR}/lib/libprotobufd.lib
+  IMPORTED_CONFIGURATIONS "RELEASE;DEBUG"
 )
 
 # PARENT_SCOPE 上级可访问的变量
-set(protobuf_BIN ${protobuf_SOURCE_DIR}/bin/libprotobuf.dll PARENT_SCOPE)
+set(protobuf_BIN ${protobuf_SOURCE_DIR}/bin/$<$<CONFIG:Debug>:libprotobufd.dll>$<$<CONFIG:Release>:libprotobuf.dll> PARENT_SCOPE)

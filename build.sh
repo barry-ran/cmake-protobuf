@@ -13,6 +13,11 @@ script_path=$(pwd)
 cd -
 } &> /dev/null # disable output
 
+if [[ $1 != "Debug" && $1 != "Release" ]]; then
+    echo "error: unkonow build mode -- $1"
+    exit 1
+fi
+
 uname
 
 rm -rf ./build
@@ -28,7 +33,7 @@ case "$(uname)" in
 
 "MINGW"*|"MSYS_NT"*)
   cmake -G "Visual Studio 16 2019" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output -A Win32 ..
-  cmake --build .
+  cmake --build . --config ${1}
   ;;
 *)
   echo "Unknown OS"
