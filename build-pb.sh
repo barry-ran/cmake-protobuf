@@ -42,13 +42,15 @@ PB_INSTALL_PATH="$script_path/install/protobuf"
 PB_BUILD_PATH="$script_path/build"
 INSTALL_NAME="protobuf-$PB_VERSION-$OS-$ARCH.zip"
 
+if [ ! -d "protobuf" ]; then
+  git clone -b $PB_VERSION https://github.com/protocolbuffers/protobuf.git
+  pushd "protobuf"
+    git submodule update --init --recursive
+  popd
+fi
+
 rm -rf $PB_BUILD_PATH
 mkdir $PB_BUILD_PATH
-
-git clone -b $PB_VERSION https://github.com/protocolbuffers/protobuf.git
-pushd "protobuf"
-git submodule update --init --recursive
-popd
 
 pushd "${PB_BUILD_PATH}"
 
@@ -75,7 +77,13 @@ case "$(uname)" in
   ;;
 esac
 
-cmake --build . --config Release --target install
+cmake_build() {
+  cmake --build . --config ${1} --target install
+}
+
+cmake_build Debug
+cmake_build Release
+
 popd
 
 7z a ./$INSTALL_NAME ./install/*
