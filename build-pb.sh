@@ -17,6 +17,17 @@ script_path=$(pwd)
 cd -
 } &> /dev/null # disable output
 
+SHARED_LIBS=OFF
+if [[ $1 != "Shared" && $1 != "Static" ]]; then
+    echo "error: unkonow build mode -- $1, use default Static"
+fi
+if [[ $1 == "Shared" ]]; then
+    SHARED_LIBS=ON
+fi
+if [[ $1 == "Static" ]]; then
+    SHARED_LIBS=OFF
+fi
+
 uname
 
 # 定义平台变量
@@ -40,7 +51,7 @@ PB_VERSION="v21.1"
 PB_REP_PATH="$script_path/protobuf"
 PB_INSTALL_PATH="$script_path/install/protobuf"
 PB_BUILD_PATH="$script_path/build"
-INSTALL_NAME="protobuf-$PB_VERSION-$OS-$ARCH.zip"
+INSTALL_NAME="protobuf-$PB_VERSION-$OS-$ARCH-$1.zip"
 
 if [ ! -d "protobuf" ]; then
   git clone -b $PB_VERSION https://github.com/protocolbuffers/protobuf.git
@@ -58,7 +69,7 @@ case "$(uname)" in
 "Darwin")
   cmake -G "Xcode" -Dprotobuf_BUILD_TESTS=OFF \
     -Dprotobuf_UNICODE=ON \
-    -DBUILD_SHARED_LIBS=ON \
+    -DBUILD_SHARED_LIBS=${SHARED_LIBS} \
     -DCMAKE_INSTALL_PREFIX=${PB_INSTALL_PATH} \
     ${PB_REP_PATH}
   ;;
@@ -66,7 +77,8 @@ case "$(uname)" in
 "MINGW"*|"MSYS_NT"*)
   cmake -G "Visual Studio 16 2019" -A Win32 -Dprotobuf_BUILD_TESTS=OFF \
     -Dprotobuf_UNICODE=ON \
-    -DBUILD_SHARED_LIBS=ON \
+    -Dprotobuf_MSVC_STATIC_RUNTIME=OFF \
+    -DBUILD_SHARED_LIBS=${SHARED_LIBS} \
     -DCMAKE_INSTALL_PREFIX=${PB_INSTALL_PATH} \
     ${PB_REP_PATH}
   ;;

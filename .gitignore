@@ -12,3 +12,4 @@ _deps
 /build
 /third_party/protobuf/protobuf
 .vscode
+/output

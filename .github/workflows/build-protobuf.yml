@@ -10,6 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
+        lib_type: [Static, Shared]
         os:
          # windows-latest会始终保持最新（目前是2022）
          # windows server 2019安装的是vs2019，windows server 2016安装的是vs2017
@@ -26,13 +27,13 @@ jobs:
       - name: build on windows
         if: runner.os == 'Windows'
         run: |
-          call "C:\Program Files\Git\bin\bash.EXE" --noprofile --norc -e -o pipefail build-pb.sh
+          call "C:\Program Files\Git\bin\bash.EXE" --noprofile --norc -e -o pipefail build-pb.sh ${{ matrix.lib_type }}
         shell: cmd
       
       - name: build on mac
         if: runner.os == 'macOS'
         run: |
-          ./build-pb.sh
+          ./build-pb.sh ${{ matrix.lib_type }}
         shell: bash
 
       - name: read install name

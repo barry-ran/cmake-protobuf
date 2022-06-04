@@ -7,6 +7,12 @@ set -u
 
 help | head
 
+{
+cd $(dirname "$0")
+script_path=$(pwd)
+cd -
+} &> /dev/null # disable output
+
 uname
 
 rm -rf ./build
@@ -21,7 +27,7 @@ case "$(uname)" in
   ;;
 
 "MINGW"*|"MSYS_NT"*)
-  cmake -G "Visual Studio 16 2019" -A Win32 ..
+  cmake -G "Visual Studio 16 2019" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output -A Win32 ..
   cmake --build .
   ;;
 *)
