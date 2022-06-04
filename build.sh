@@ -20,19 +20,27 @@ fi
 
 uname
 
-rm -rf ./build
-mkdir build
+#rm -rf ./build
+need_generate_cmake=false
+if [ ! -d "build" ]; then
+  mkdir build
+  need_generate_cmake=true
+fi
 
 pushd build
 
 case "$(uname)" in
 "Darwin")
-  cmake -G "Xcode" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output ..
+  if [ "$need_generate_cmake" = true ]; then
+    cmake -G "Xcode" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output ..
+  fi
   cmake --build . --config ${1}
   ;;
 
 "MINGW"*|"MSYS_NT"*)
-  cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output ..
+  if [ "$need_generate_cmake" = true ]; then
+    cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output ..
+  fi
   cmake --build . --config ${1}
   ;;
 *)

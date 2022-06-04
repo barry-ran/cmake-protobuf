@@ -3,7 +3,16 @@ cmake_minimum_required(VERSION 3.16)
 # 项目名称
 set(PROJECT_NAME "http-test")
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} 
+  main.cpp
+  protobuf/cpp/api.pb.h
+  protobuf/cpp/api.pb.cc
+  protobuf/cpp/test.pb.h
+  protobuf/cpp/test.pb.cc
+)
+
+# 动态库方式使用protobuf一定要将这个宏添加到预处理器，在代码中定义太晚了
+target_compile_definitions(${PROJECT_NAME} PRIVATE PROTOBUF_USE_DLLS)
 
 target_link_libraries(${PROJECT_NAME} protobuf)
 

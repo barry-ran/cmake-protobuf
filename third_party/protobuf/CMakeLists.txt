@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 # 下载并解压protobuf
+#（不想下载的话也可以删除FetchContent相关，然后使用子仓库管理protobuf或者直接将protobuf二进制添加到git中管理）
+# FetchContent_Declare不支持生成器表达式，所以protobuf_url不能用生成器表达式赋值，例如set(protobuf_url $<$<PLATFORM_ID:Windows>:http://...>)
+# 生成器表达式不能代替if，生成器表达式只能放在支持生成器表达式的函数中中使用
 if(WIN32)
   set(protobuf_url "https://github.com/barry-ran/cmake-protobuf/releases/download/v21.1/protobuf-v21.1-win-x86-Shared.zip")
 elseif(APPLE)
@@ -33,6 +36,9 @@ if(WIN32)
   )
 
   # PARENT_SCOPE 上级可访问的变量
+  # protobuf_BIN使用了生成器表达式，使用message打印出来是表达式原样，因为message不支持生成器表达式
+  # 但是protobuf_BIN放到add_custom_command中会计算出生成器表达式的值，因为add_custom_command支持生成器表达式
+  # 生成器表达式只能放在支持生成器表达式的函数中中使用
   set(protobuf_BIN ${protobuf_SOURCE_DIR}/bin/$<$<CONFIG:Debug>:libprotobufd.dll>$<$<CONFIG:Release>:libprotobuf.dll> PARENT_SCOPE)
 
 elseif(APPLE)
