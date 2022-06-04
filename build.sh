@@ -27,12 +27,12 @@ pushd build
 
 case "$(uname)" in
 "Darwin")
-  cmake -G "Xcode" ..
-  cmake --build .
+  cmake -G "Xcode" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output ..
+  cmake --build . --config ${1}
   ;;
 
 "MINGW"*|"MSYS_NT"*)
-  cmake -G "Visual Studio 16 2019" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output -A Win32 ..
+  cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${script_path}/output ..
   cmake --build . --config ${1}
   ;;
 *)
