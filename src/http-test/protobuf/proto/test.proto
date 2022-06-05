@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "google/protobuf/any.proto";
 
 message SearchRequest {
   string query = 1;
@@ -7,6 +8,27 @@ message SearchRequest {
 }
 
 message SearchResponse {
-  int32 result_code = 1;
+  int32 code = 1;
   repeated string results = 2;
+}
+
+message DataA {
+  string name = 1;
+}
+
+message DataB {
+  repeated string names = 1;
+} 
+
+message AnyRequest {
+  enum DataType {
+    DATATYPE_A = 0;
+    DATATYPE_B = 2;
+  }
+  DataType data_type = 1;
+  google.protobuf.Any data = 2;
+}
+
+message AnyResponse {
+  int32 code = 1;
 }

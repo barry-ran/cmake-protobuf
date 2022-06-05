@@ -5,8 +5,7 @@ set(PROJECT_NAME "http-test")
 
 add_executable(${PROJECT_NAME} 
   main.cpp
-  protobuf/cpp/api.pb.h
-  protobuf/cpp/api.pb.cc
+  httplib.h
   protobuf/cpp/test.pb.h
   protobuf/cpp/test.pb.cc
 )

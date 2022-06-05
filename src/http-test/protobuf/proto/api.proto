@@ -1,7 +1,25 @@
 syntax = "proto3";
 
+import "common/google/api/annotations.proto";
 import "test.proto";
 
+// service主要是服务端用来定义rpc接口的，同时服务端对外一定是要提供Restful接口，
+// 如果内部调用使用grpc，在某些情况下要同时对外提供相同功能的Restful接口，那么就要写两套API接口，
+// 这样就不仅降低了开发效率，也增加了调试的复杂度。于是就想着有没有一个转换机制，让Restful和gprc可以相互转化
+// 是grpc可以提供Restful接口，参考如下：
+// https://grpc.io/blog/coreos/
+
 service SearchService {
-  rpc Search(SearchRequest) returns (SearchResponse);
+  rpc Search(SearchRequest) returns (SearchResponse) {
+    option (google.api.http) = {
+      post: "/http-test/v1/search/"
+      body: "*"
+    };
+  }
+  rpc Any(AnyRequest) returns (AnyResponse) {
+    option (google.api.http) = {
+      post: "/http-test/v1/any/"
+      body: "*"
+    };
+  }
 }
